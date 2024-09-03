@@ -8,7 +8,7 @@ let progressValue= document.querySelector('.progress-value')
 let userInput;
 let userInputValue;
 const emptyArr=[];
-let initialProgressValue=1;
+let initialProgressValue=0;
 progressValue.style.width= initialProgressValue +'%';
 updateProgressBarText()
 
@@ -44,14 +44,15 @@ checkBoxList.forEach((checkBox, i) => {
 
       if(checkBox.parentElement.classList.contains('completed')) {
         
-        initialProgressValue+= 33;
+        initialProgressValue+= 33.33;
         progressValue.style.width=  initialProgressValue + '%' ;
+        progressValue.style.visibility=  'visible';
         updateProgressBarText()
 
       }
       
          else{
-        initialProgressValue-= 33;
+        initialProgressValue-= 33.33;
         progressValue.style.width=  initialProgressValue + '%' ;
         updateProgressBarText()
       }
@@ -60,7 +61,18 @@ checkBoxList.forEach((checkBox, i) => {
     
     else {
       warningMsg.classList.remove('hide');
-      
+       inputList.forEach((input) => {
+
+        input.addEventListener('focus', () =>{
+
+          warningMsg.classList.add('hide');
+
+        })
+       
+
+
+       })
+     
        
     }
   });
@@ -71,21 +83,21 @@ checkBoxList.forEach((checkBox, i) => {
 
   let progressValue= document.querySelector('.progress-value')
 
-  if(initialProgressValue===1) {
+  if(initialProgressValue===0) {
 
-    
-    progressValue.innerText= '0/3 Completed' ;
+    progressValue.style.visibility=  'hidden';
+    progressValue.innerText= '' ;
       
   }
 
-  else if(initialProgressValue===34) {
+  else if(initialProgressValue===33.33) {
 
     
     progressValue.innerText= '1/3 Completed' ;
       
   }
 
-  else if(initialProgressValue===67) {
+  else if(initialProgressValue===66.66) {
 
     
     progressValue.innerText= '2/3 Completed' ;
@@ -93,7 +105,7 @@ checkBoxList.forEach((checkBox, i) => {
   }
 
 
-  if(initialProgressValue===100) {
+  if(initialProgressValue===99.99) {
 
     
     progressValue.innerText= '3/3 Completed' ;
