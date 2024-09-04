@@ -67,7 +67,7 @@ checkBoxList.forEach((checkBox, i) => {
        
         
         if(input.value==='') {
-          debugger
+    
           initialProgressValue = 0
           updateProgressBarText()
 
