@@ -2,6 +2,20 @@ let checkBoxList = document.querySelectorAll('.custom-check-box');
 let inputList = document.querySelectorAll('.goal-title');
 const warningMsg = document.querySelector('#warning-msg');
 let progressValue = document.querySelector('.progress-value');
+let progressValueText= document.querySelector('.progress-value span');
+
+
+
+
+const allQuotes= [
+  'Raise the bar by completing your goals!',
+  'Well begun is half done!',
+  'Just a step away, keep going!',
+  'Whoa! You just completed all the goals, time for chill :D'
+  ]
+  
+let progressLabel =document.querySelector('.progress-label');
+progressLabel.innerText=  allQuotes[0];
 
 let userInput;
 let userInputValue;
@@ -63,8 +77,18 @@ checkBoxList.forEach((checkBox, i) => {
 
     inputList.forEach((input)=> {
 
+      let inputText= input.value
+
+      input.addEventListener('input', ()=>{
+        if(input.parentElement.classList.contains('completed')) {
+          input.value= inputText
+        }
+  
+      })
+
+    
       input.addEventListener('change', () => {
-       
+    
         
         if(input.value==='') {
     
@@ -82,20 +106,35 @@ checkBoxList.forEach((checkBox, i) => {
   });
 });
 
+
+
+
+
 function updateProgressBarText() {
   let progressValue = document.querySelector('.progress-value');
 
   if (initialProgressValue === 0) {
-    progressValue.style.visibility = 'hidden';
-    progressValue.innerText = '';
-  } else if (initialProgressValue === 33.33) {
-    progressValue.innerText = '1/3 Completed';
+    progressValue.style.width = 0;
+    progressLabel.innerText=  allQuotes[0];
+    // progressValueText.innerText = '0/3 Completed';
+
+  } 
+  
+  else if (initialProgressValue === 33.33) {
+    progressValueText.innerText = '1/3 Completed';
+    progressLabel.innerText=  allQuotes[1];
+
+
+
   } else if (initialProgressValue === 66.66) {
-    progressValue.innerText = '2/3 Completed';
+    progressValueText.innerText = '2/3 Completed';
+    progressLabel.innerText=  allQuotes[2];
+    
   }
 
-  if (initialProgressValue === 99.99) {
-    progressValue.innerText = '3/3 Completed';
+  else if (initialProgressValue === 99.99) {
+    progressValueText.innerText = '3/3 Completed';
+    progressLabel.innerText=  allQuotes[3];
   }
 }
 
