@@ -13,8 +13,6 @@ body {
   margin: 0;
 }
 
- 
-
 main {
   padding: 0 16px;
   margin-bottom: 16px;
@@ -61,7 +59,7 @@ main {
 .progress-bar {
   max-width: 574px;
   height: 18px;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.1);
   border-radius: 15px;
   margin-top: 18px;
   margin-bottom: 60px;
@@ -146,35 +144,31 @@ main {
 
 .hide {
   display: none;
+  
 }
 
-
- .completed .hide {
-    display: block;
-
-}
-
-.completed   .goal-title {
-    text-decoration: line-through;
-    color: #48a300;
-}
-
-
-.completed  .custom-check-box {
- 
-  border-color: #48a300; 
-   
+.completed .hide {
+  display: block;
  
 }
 
-#btn{
+.completed .goal-title {
+  text-decoration: line-through;
+  color: #48a300;
+}
+
+.completed .custom-check-box {
+  border-color: #48a300;
+  
+}
+
+#btn {
   padding: 10px 20px;
   border: none;
-  border-radius: .4rem;
+  border-radius: 0.4rem;
   cursor: pointer;
   background-color: aquamarine;
 }
-
 
 /* *****************Responsive**************** */
 
