@@ -2,142 +2,115 @@ let checkBoxList = document.querySelectorAll('.custom-check-box');
 let inputList = document.querySelectorAll('.goal-title');
 const warningMsg = document.querySelector('#warning-msg');
 let progressValue = document.querySelector('.progress-value');
-let progressValueText= document.querySelector('.progress-value span');
-
-
-
-
-const allQuotes= [
+let progressValueText = document.querySelector('.progress-value span');
+ 
+const allQuotes = [
   'Raise the bar by completing your goals!',
   'Well begun is half done!',
   'Just a step away, keep going!',
-  'Whoa! You just completed all the goals, time for chill :D'
-  ]
-  
-let progressLabel =document.querySelector('.progress-label');
-progressLabel.innerText=  allQuotes[0];
+  'Whoa! You just completed all the goals, time for chill :D',
+];
 
-let userInput;
-let userInputValue;
-const emptyArr = [];
-let initialProgressValue = 0;
-progressValue.style.width = initialProgressValue + '%';
-updateProgressBarText();
+let allGoals = JSON.parse(localStorage.getItem('allGoals')) || {};
+let goalCompletedCount = allGoals.goalCount || 0;
+console.log(goalCompletedCount);
+updateProgressMsg(goalCompletedCount);
 
-checkBoxList.forEach((checkBox, i) => {
+let initialProgressValue = `${(goalCompletedCount / inputList.length) * 100}%`;
+updateProgressBar();
 
+// *************   Handle Input   ***************
 
+inputList.forEach((input) => {
+  if (allGoals[input.id]) {
+    input.value = allGoals[input.id].name;
+  } else {
+    allGoals[input.id] = {
+      name: '',
+      completed: false,
+    };
+  }
 
+  if (allGoals[input.id].completed) {
+    input.previousElementSibling.firstChild.nextSibling.classList.remove(
+      'hide'
+    );
+    input.parentElement.classList.add('completed');
+  }
 
-  checkBox.addEventListener('click', () => {
-    emptyArr.length = 0;
-
-    inputList.forEach((el) => {
-      if (el.value === '') {
-      
-        emptyArr.push('true');
-      } else {
-        emptyArr.push('false');
-      }
-    });
-
-    userInputValue = inputList[i].value;
-
-    if (
-      userInputValue !== '' &&
-      emptyArr[0] === 'false' &&
-      emptyArr[1] === 'false' &&
-      emptyArr[2] === 'false'
-    ) {
-      checkBox.parentElement.classList.toggle('completed');
-      warningMsg.classList.add('hide');
-
-      if (checkBox.parentElement.classList.contains('completed')) {
-        initialProgressValue += 33.33;
-        progressValue.style.width = initialProgressValue + '%';
-        progressValue.style.visibility = 'visible';
-        updateProgressBarText();
-      } else {
-        initialProgressValue -= 33.33;
-        progressValue.style.width = initialProgressValue + '%';
-        updateProgressBarText();
-      }
+  input.addEventListener('input', (e) => {
+    if (input.parentElement.classList.contains('completed')) {
+      let inputText = allGoals[input.id].name;
+      console.log(inputText);
+      input.value = inputText;
+      return;
     } else {
-      warningMsg.classList.remove('hide');
-      inputList.forEach((input) => {
-      
+      input.value = e.target.value;
+      allGoals[input.id].name = input.value;
+      localStorage.setItem('allGoals', JSON.stringify(allGoals));
+    }
+  });
 
-        input.addEventListener('focus', () => {
-          warningMsg.classList.add('hide');
-        });
+  input.addEventListener('focus', (e) => {
+    warningMsg.classList.add('hide');
+  });
+
+  input.addEventListener('change', (e) => {
+    if (input.value === '') {
+      progressValue.style.width = 0;
+
+      inputList.forEach((input) => {
+        allGoals[input.id].completed = false;
+        input.parentElement.classList.remove('completed');
+      });
+
+      checkBoxList.forEach((checkBox) => {
+        checkBox.firstElementChild.classList.add('hide');
       });
     }
 
-
-
-    inputList.forEach((input)=> {
-
-      let inputText= input.value
-
-      input.addEventListener('input', ()=>{
-        if(input.parentElement.classList.contains('completed')) {
-          input.value= inputText
-        }
-  
-      })
-
-    
-      input.addEventListener('change', () => {
-    
-        
-        if(input.value==='') {
-    
-          initialProgressValue = 0
-          updateProgressBarText()
-
-      checkBox.parentElement.classList.remove('completed');
-      
-       
-        }
-      })
-
-    })
-
+    localStorage.setItem('allGoals', JSON.stringify(allGoals));
   });
 });
 
+// *****************   Handle CheckBox   ****************************
 
+checkBoxList.forEach((checkBox) => {
+  checkBox.addEventListener('click', (e) => {
+    let allGoalsAdded = [...inputList].every((input) => {
+      return input.value;
+    });
+    let inputId = checkBox.nextElementSibling.id;
+    if (allGoalsAdded) {
+      checkBox.firstElementChild.classList.toggle('hide');
+      checkBox.parentElement.classList.toggle('completed');
+      allGoals[inputId].completed = !allGoals[inputId].completed;
+      goalCompletedCount = Object.values(allGoals).filter(
+        (goal) => goal.completed
+      ).length;
+      allGoals.goalCount = goalCompletedCount;
+      updateProgressMsg();
+      updateProgressBar();
+    } else {
+      warningMsg.classList.remove('hide');
+    }
+    localStorage.setItem('allGoals', JSON.stringify(allGoals));
+  });
+});
 
+function updateProgressMsg() {
+  let progressLabel = document.querySelector('.progress-label');
 
-
-function updateProgressBarText() {
-  let progressValue = document.querySelector('.progress-value');
-
-  if (initialProgressValue === 0) {
-    progressValue.style.width = 0;
-    progressLabel.innerText=  allQuotes[0];
-    // progressValueText.innerText = '0/3 Completed';
-
-  } 
-  
-  else if (initialProgressValue === 33.33) {
-    progressValueText.innerText = '1/3 Completed';
-    progressLabel.innerText=  allQuotes[1];
-
-
-
-  } else if (initialProgressValue === 66.66) {
-    progressValueText.innerText = '2/3 Completed';
-    progressLabel.innerText=  allQuotes[2];
-    
-  }
-
-  else if (initialProgressValue === 99.99) {
-    progressValueText.innerText = '3/3 Completed';
-    progressLabel.innerText=  allQuotes[3];
-  }
+  progressLabel.innerText = allQuotes[goalCompletedCount];
 }
 
- 
+function updateProgressBar() {
+  initialProgressValue = `${(goalCompletedCount / inputList.length) * 100}%`;
+  progressValue.style.width = initialProgressValue;
+  progressValueText.innerText = `${goalCompletedCount}/${inputList.length} Completed`;
+  // console.log(initialProgressValue);
+}
+
+
 
 
