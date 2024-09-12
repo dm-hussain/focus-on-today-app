@@ -142,8 +142,7 @@ function reUpdate() {
     }
 
     if (allGoals[input.id].completed) {
- 
-      console.log(input.previousElementSibling.firstChild);
+  
  
       input.parentElement.classList.add('completed');
     }
