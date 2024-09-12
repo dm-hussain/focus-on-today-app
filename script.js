@@ -3,11 +3,25 @@ let inputList = document.getElementsByClassName('goal-title');
 const warningMsg = document.querySelector('#warning-msg');
 let progressValue = document.querySelector('.progress-value');
 let progressValueText = document.querySelector('.progress-value span');
-
+let warningMsgSpan= document.querySelector('#warning-msg span')
 let userInput;
 let prevValue = '';
 let userLength;
 let prevLength;
+
+// Add event listener to the button
+const addGoalBtn = document.getElementById('add-goal-button');
+addGoalBtn.addEventListener('click', addNewTask);
+document.addEventListener('DOMContentLoaded', loadTasks);
+
+let allGoals = JSON.parse(localStorage.getItem('allGoals')) || {};
+let goalCompletedCount = allGoals.goalCount || 0;
+let task = allGoals.task || 0;
+
+let taskRemaining;
+updateProgressMsg();
+let initialProgressValue = `${(goalCompletedCount / inputList.length) * 100}%`;
+updateProgressBar();
 
 // ***********Handle Button*****************
 
@@ -35,121 +49,29 @@ function createTaskBox(id, value) {
   return taskBox;
 }
  
-
 // Function to append a new task box to the task container
 function addNewTask() {
   resetCheckBox();
-
   const taskContainer = document.querySelector('.task-container');
   const newTaskBox = createTaskBox();
   taskContainer.appendChild(newTaskBox);
   saveTasks();
   reUpdate();
-
   localStorage.setItem('allGoals', JSON.stringify(allGoals));
-
-  setTimeout(() => {
-    location.reload();
-  }, 1);
 }
 
-// Add event listener to the button
-const addGoalBtn = document.getElementById('add-goal-button');
-addGoalBtn.addEventListener('click', addNewTask);
-
-document.addEventListener('DOMContentLoaded', loadTasks);
-
-// const allQuotes = [
-//   'Raise the bar by completing your goals!',
-//   'Well begun is half done!',
-//   'Just a step away, keep going!',
-//   'Whoa! You just completed all the goals, time for chill :D',
-// ];
-
-let allGoals = JSON.parse(localStorage.getItem('allGoals')) || {};
-let goalCompletedCount = allGoals.goalCount || 0;
-let task = allGoals.task || 0;
-let taskRemaining;
-updateProgressMsg();
-let initialProgressValue = `${(goalCompletedCount / inputList.length) * 100}%`;
-updateProgressBar();
-
-// *************   Handle Input   ***************
-
-[...inputList].forEach((input) => {
-  console.log(input);
-
-  if (allGoals[input.id]) {
-    input.value = allGoals[input.id].name;
-  } else {
-    allGoals[input.id] = {
-      name: '',
-      completed: false,
-    };
-  }
-
-  if (allGoals[input.id].completed) {
-    input.parentElement.classList.add('completed');
-  }
-
-  input.addEventListener('input', (e) => {
-    userInput = e.target.value;
-    userLength = userInput.length;
-    prevLength = prevValue.length;
-
-    if (input.parentElement.classList.contains('completed')) {
-      let inputText = allGoals[input.id].name;
-      console.log(inputText);
-      input.value = inputText;
-      return;
-    } else {
-      input.value = e.target.value;
-      allGoals[input.id].name = input.value;
-      localStorage.setItem('allGoals', JSON.stringify(allGoals));
-    }
-    prevValue = userInput;
-  });
-
-  input.addEventListener('change', () => {
-    updateTask(input);
-  });
-
-  input.addEventListener('focus', (e) => {
-    warningMsg.classList.add('hide');
-  });
-
-  localStorage.setItem('allGoals', JSON.stringify(allGoals));
-});
-
-// *****************   Handle CheckBox   ****************************
-
-[...checkBoxList].forEach((checkBox) => {
-  checkBox.addEventListener('click', (e) => {
-    let allGoalsAdded = [...inputList].every((input) => {
-      return input.value;
-    });
-    let inputId = checkBox.nextElementSibling.id;
-    if (allGoalsAdded) {
-      // checkBox.firstElementChild.classList.toggle('hide');
-      checkBox.parentElement.classList.toggle('completed');
-      allGoals[inputId].completed = !allGoals[inputId].completed;
-      goalCompletedCount = Object.values(allGoals).filter(
-        (goal) => goal.completed
-      ).length;
-      allGoals.goalCount = goalCompletedCount;
-      updateProgressMsg();
-      updateProgressBar();
-    } else {
-      warningMsg.classList.remove('hide');
-    }
-    localStorage.setItem('allGoals', JSON.stringify(allGoals));
-  });
-});
 
 function updateProgressMsg() {
+
   let progressLabel = document.querySelector('.progress-label');
-  taskRemaining = task - goalCompletedCount;
-  progressLabel.innerText = `You have ${taskRemaining} task to complete`;
+  if(task/goalCompletedCount === 1) {
+    progressLabel.innerText = `Whoa! You just completed all the goals, time for chill :D`;
+  }
+  else{
+    taskRemaining = task - goalCompletedCount;
+    progressLabel.innerText = `You have ${taskRemaining} goal to complete`;
+  }
+ 
 }
 
 function updateProgressBar() {
@@ -157,6 +79,15 @@ function updateProgressBar() {
   progressValue.style.width = initialProgressValue;
   progressValueText.innerText = `${goalCompletedCount}/${inputList.length} Completed`;
 }
+
+const allQuotes = [
+  'Raise the bar by completing your goals!',
+  // 'Well begun is half done!',
+  // 'Just a step away, keep going!',
+  'Whoa! You just completed all the goals, time for chill :D',
+];
+ 
+ 
 
 // ***********Save task to local Storage*************
 
@@ -185,6 +116,9 @@ function loadTasks() {
   updateProgressBar();
 }
 
+// **************************************************************************************************************************************
+// function to Re-Update all the values and functions after retrieving all the data from LocalStorage
+
 function reUpdate() {
   // *************   Handle Input   ***************
 
@@ -199,10 +133,9 @@ function reUpdate() {
     }
 
     if (allGoals[input.id].completed) {
-      // debugger
+ 
       console.log(input.previousElementSibling.firstChild);
-
-      // input.previousElementSibling.firstChild.classList.remove('hide');
+ 
       input.parentElement.classList.add('completed');
     }
 
@@ -237,13 +170,16 @@ function reUpdate() {
   // *****************   Handle CheckBox   ****************************
 
   [...checkBoxList].forEach((checkBox) => {
+ 
+    warningMsgSpan.innerText  =  inputList.length;
+    
     checkBox.addEventListener('click', (e) => {
       let allGoalsAdded = [...inputList].every((input) => {
         return input.value;
       });
       let inputId = checkBox.nextElementSibling.id;
       if (allGoalsAdded) {
-        // checkBox.firstElementChild.classList.toggle('hide');
+   
         checkBox.parentElement.classList.toggle('completed');
         allGoals[inputId].completed = !allGoals[inputId].completed;
         goalCompletedCount = Object.values(allGoals).filter(
@@ -259,22 +195,11 @@ function reUpdate() {
     });
   });
 
-  function updateProgressMsg() {
-    let progressLabel = document.querySelector('.progress-label');
-    taskRemaining = task - goalCompletedCount;
-    // progressLabel.innerText = allQuotes[goalCompletedCount];
-    progressLabel.innerText = `You have ${taskRemaining} task to complete`;
-  }
-
-  function updateProgressBar() {
-    initialProgressValue = `${(goalCompletedCount / inputList.length) * 100}%`;
-    progressValue.style.width = initialProgressValue;
-    progressValueText.innerText = `${goalCompletedCount}/${inputList.length} Completed`;
-  }
+ 
 }
 
 function updateTask(inp) {
-  console.log(userLength, prevLength);
+ 
   if (prevLength < userLength) {
     task++;
     allGoals.task = task;
@@ -305,3 +230,4 @@ function resetCheckBox() {
   });
   localStorage.setItem('allGoals', JSON.stringify(allGoals));
 }
+
