@@ -51,20 +51,25 @@ function createTaskBox(id, value) {
  
 // Function to append a new task box to the task container
 function addNewTask() {
-  
+   
+  progressValue.style.width =0;
+  goalCompletedCount= 0;
+  updateProgressMsg()
   resetCheckBox();
   const taskContainer = document.querySelector('.task-container');
   const newTaskBox = createTaskBox();
   taskContainer.appendChild(newTaskBox);
   saveTasks();
   reUpdate();
+ 
   localStorage.setItem('allGoals', JSON.stringify(allGoals));
+   
   setTimeout(()=> {
     location.reload()
-  })
+  }, 500)
 
-  updateProgressBar()
-  updateProgressMsg()
+  
+  
 }
 
 
