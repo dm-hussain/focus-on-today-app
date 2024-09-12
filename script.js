@@ -51,6 +51,7 @@ function createTaskBox(id, value) {
  
 // Function to append a new task box to the task container
 function addNewTask() {
+  
   resetCheckBox();
   const taskContainer = document.querySelector('.task-container');
   const newTaskBox = createTaskBox();
@@ -58,6 +59,12 @@ function addNewTask() {
   saveTasks();
   reUpdate();
   localStorage.setItem('allGoals', JSON.stringify(allGoals));
+  setTimeout(()=> {
+    location.reload()
+  })
+
+  updateProgressBar()
+  updateProgressMsg()
 }
 
 
@@ -66,6 +73,7 @@ function updateProgressMsg() {
   let progressLabel = document.querySelector('.progress-label');
   if(task/goalCompletedCount === 1) {
     progressLabel.innerText = `Whoa! You just completed all the goals, time for chill :D`;
+    
   }
   else{
     taskRemaining = task - goalCompletedCount;
@@ -80,12 +88,12 @@ function updateProgressBar() {
   progressValueText.innerText = `${goalCompletedCount}/${inputList.length} Completed`;
 }
 
-const allQuotes = [
-  'Raise the bar by completing your goals!',
-  // 'Well begun is half done!',
-  // 'Just a step away, keep going!',
-  'Whoa! You just completed all the goals, time for chill :D',
-];
+// const allQuotes = [
+//   'Raise the bar by completing your goals!',
+//   // 'Well begun is half done!',
+//   // 'Just a step away, keep going!',
+//   'Whoa! You just completed all the goals, time for chill :D',
+// ];
  
  
 
@@ -113,6 +121,7 @@ function loadTasks() {
   });
 
   reUpdate();
+ 
   updateProgressBar();
 }
 

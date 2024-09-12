@@ -173,6 +173,18 @@ main {
   transform: translateX(-50%);
   
 }
+#reset-btn{
+  padding: 10px 20px;
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  background-color: rgb(247, 202, 3);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: black;
+
+}
 
 #admin-msg{
   margin-top: 60px;
