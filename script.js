@@ -5,8 +5,6 @@ let progressValue = document.querySelector('.progress-value');
 let progressValueText = document.querySelector('.progress-value span');
 let warningMsgSpan= document.querySelector('#warning-msg span')
 
-
-
 // Add event listener to the button
 const addGoalBtn = document.getElementById('add-goal-button');
 addGoalBtn.addEventListener('click', addNewTask);
@@ -44,10 +42,6 @@ function createTaskBox(id, value) {
   taskBox.appendChild(checkBox);
   taskBox.appendChild(input);
   inputCounter++;
-
-
- 
-
   return taskBox;
 }
  
@@ -62,22 +56,14 @@ function addNewTask() {
   const newTaskBox = createTaskBox();
   taskContainer.appendChild(newTaskBox);
   saveTasks();
-  
   reUpdate();
- 
   localStorage.setItem('allGoals', JSON.stringify(allGoals));
    
   setTimeout(()=> {
     location.reload()
-  }, 500)
+  }, 100)
 
-  let checkBoxParentEl=  newTaskBox;
-  console.log(checkBoxParentEl);
-  
   updateProgressBar();
-  // updateCheckBox(newTaskBox.firstElementChild, checkBoxParentEl);
- 
-  
 }
 
 
@@ -134,7 +120,6 @@ function loadTasks() {
   });
 
   reUpdate();
- 
   updateProgressBar();
 }
 
@@ -155,23 +140,13 @@ function reUpdate() {
     }
 
     if (allGoals[input.id].completed) {
-  
- 
       input.parentElement.classList.add('completed');
     }
 
 
-    // prevValue =''
     input.addEventListener('input', (e) => {
-      // userInput = e.target.value;
-      // userLength = userInput.length;
-      // prevLength = prevValue.length;
-
-     
-
       if (input.parentElement.classList.contains('completed')) {
         let inputText = allGoals[input.id].name;
-
         input.value = inputText;
         return;
       } else {
@@ -179,20 +154,15 @@ function reUpdate() {
         allGoals[input.id].name = input.value;
         localStorage.setItem('allGoals', JSON.stringify(allGoals));
       }
-
-      // prevValue = userInput;
-     
     });
 
     input.addEventListener('focus', (e) => {
       warningMsg.classList.add('hide');
     });
 
-
-
      let previousUserInput='';
     input.addEventListener('change', (e) => {
-      debugger
+ 
       let userInput;
       let prevValue = '';
       let userLength;
@@ -200,88 +170,41 @@ function reUpdate() {
       userInput = e.target.value;
       userLength = userInput.length;
       prevLength = prevValue.length;
-
       if (e.target.value.length===0) {
         task--;
     allGoals.task = task;
     localStorage.setItem('allGoals', JSON.stringify(allGoals));
     goalCompletedCount=0;
     resetCheckBox()
-    
       } 
-  
       else   {
-       
         updateTask(e.target, prevLength, userLength, prevValue, previousUserInput);
         
       }
-        console.log(prevValue);
-        
+        // console.log(prevValue);
       prevValue = userInput;
       previousUserInput= prevValue;
-      console.log(prevValue);
+      // console.log(prevValue);
       
     });
 
-   
-  
   });
-
-
- 
- 
- 
 
 
   // *****************   Handle CheckBox   ****************************
 
-  // [...checkBoxList].forEach((checkBox) => {
  
-  //   warningMsgSpan.innerText  =  inputList.length;
-    
-  //   checkBox.addEventListener('click', (e) => {
-  //     let allGoalsAdded = [...inputList].every((input) => {
-  //       return input.value;
-  //     });
-  //     let inputId = checkBox.nextElementSibling.id;
-  //     if (allGoalsAdded) {
-   
-  //       checkBox.parentElement.classList.toggle('completed');
-  //       allGoals[inputId].completed = !allGoals[inputId].completed;
-  //       goalCompletedCount = Object.values(allGoals).filter(
-  //         (goal) => goal.completed
-  //       ).length;
-  //       allGoals.goalCount = goalCompletedCount;
-  //       updateProgressMsg();
-  //       updateProgressBar();
-  //     } else {
-  //       warningMsg.classList.remove('hide');
-  //     }
-  //     localStorage.setItem('allGoals', JSON.stringify(allGoals));
-  //   });
-  // });
-
   [...checkBoxList].forEach((checkBox) => {
-  
- 
     warningMsgSpan.innerText  =  inputList.length;
-    
-
     checkBox.addEventListener('click', (e) => {
 
       // debugger
-    
-    
       let allGoalsAdded = [...inputList].every((input) => {
         return input.value;
       });
       let inputId = checkBox.nextElementSibling.id;
-      
-      
       if (allGoalsAdded) {
-        // debugger
-        console.log(checkBox.parentElement);
-     
+        // console.log(checkBox.parentElement);`
         checkBox.parentElement.classList.toggle('completed');
         allGoals[inputId].completed = !allGoals[inputId].completed;
         goalCompletedCount = Object.values(allGoals).filter(
@@ -295,45 +218,17 @@ function reUpdate() {
       }
       localStorage.setItem('allGoals', JSON.stringify(allGoals));
     });
-   
   });
-  
- 
 }
 
 function updateTask(inp, prevLength, userLength, prevValue, previousUserInput) {
-  // debugger
- console.log(prevLength, userLength);
 
- console.log(prevValue);
- 
- 
   if (prevLength < userLength && inp.value !== "" && previousUserInput=== '') {
     task++;
     allGoals.task = task;
     localStorage.setItem('allGoals', JSON.stringify(allGoals));
     updateProgressMsg();
-    // prevValue=''
   } 
-  
-  // else if(prevLength > userLength && inp.value === ""){
-  //   task--;
-  //   allGoals.goalCount = 0;
-  //   goalCompletedCount = 0;
-  //   allGoals.task = task;
-  //   localStorage.setItem('allGoals', JSON.stringify(allGoals));
-  //   progressValue.style.width = 0;
-  //   updateProgressMsg();
-  //   updateProgressBar();
-  //   [...inputList].forEach((input) => {
-  //     allGoals[input.id].completed = false;
-  //     input.parentElement.classList.remove('completed');
-  //   });
-  //   localStorage.setItem('allGoals', JSON.stringify(allGoals));
-  // }
-  else{
-    alert()
-  }
 }
 
 function resetCheckBox() {
@@ -342,65 +237,10 @@ function resetCheckBox() {
     allGoals[input.id].completed = false;
     input.parentElement.classList.remove('completed');
   });
-
   updateProgressMsg();
   updateProgressBar()
   localStorage.setItem('allGoals', JSON.stringify(allGoals));
 }
 
 
-
-// function updateCheckBox(checkBox, checkBoxParentEl  ){
-// //  debugger
-// console.log(checkBoxParentEl);
-//   checkBox.addEventListener('click', (e) => {
-//     let allGoalsAdded = [...inputList].every((input) => {
-//       return input.value;
-//     });
-//     let inputId = checkBox.nextElementSibling.id;
-    
-    
-//     if (allGoalsAdded) {
-//       console.log(checkBox);
-     
-//       checkBoxParentEl.classList.toggle('completed');
-//       // checkBox.parentElement.classList.toggle('completed');
-//       allGoals[inputId].completed = !allGoals[inputId].completed;
-//       goalCompletedCount = Object.values(allGoals).filter(
-//         (goal) => goal.completed
-//       ).length;
-//       allGoals.goalCount = goalCompletedCount;
-//       updateProgressMsg();
-//       updateProgressBar();
-//     } else {
-//       warningMsg.classList.remove('hide');
-//     }
-//     localStorage.setItem('allGoals', JSON.stringify(allGoals));
-//   });
-// }
-
-
-
-// function updateTask(inp) {
-//   // debugger
-//  console.log(prevLength, userLength);
  
-// console.log(prevValue);
- 
-//   if ( inp.value !== "" && prevValue==='') {
-//     task++;
-//     allGoals.task = task;
-//     localStorage.setItem('allGoals', JSON.stringify(allGoals));
-//     updateProgressMsg();
-//   } 
-//   else if(prevValue!=='' && prevLength===userLength){
-//     task++;
-//     allGoals.task = task;
-//     localStorage.setItem('allGoals', JSON.stringify(allGoals));
-//     updateProgressMsg();
-//   }
- 
-//   else{
-//     alert()
-//   }
-// }
