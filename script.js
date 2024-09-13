@@ -4,10 +4,8 @@ const warningMsg = document.querySelector('#warning-msg');
 let progressValue = document.querySelector('.progress-value');
 let progressValueText = document.querySelector('.progress-value span');
 let warningMsgSpan= document.querySelector('#warning-msg span')
-let userInput;
-let prevValue = '';
-let userLength;
-let prevLength;
+
+
 
 // Add event listener to the button
 const addGoalBtn = document.getElementById('add-goal-button');
@@ -46,12 +44,16 @@ function createTaskBox(id, value) {
   taskBox.appendChild(checkBox);
   taskBox.appendChild(input);
   inputCounter++;
+
+
+ 
+
   return taskBox;
 }
  
 // Function to append a new task box to the task container
 function addNewTask() {
-   
+  
   progressValue.style.width =0;
   goalCompletedCount= 0;
   updateProgressMsg()
@@ -60,6 +62,7 @@ function addNewTask() {
   const newTaskBox = createTaskBox();
   taskContainer.appendChild(newTaskBox);
   saveTasks();
+  
   reUpdate();
  
   localStorage.setItem('allGoals', JSON.stringify(allGoals));
@@ -68,7 +71,12 @@ function addNewTask() {
     location.reload()
   }, 500)
 
+  let checkBoxParentEl=  newTaskBox;
+  console.log(checkBoxParentEl);
   
+  updateProgressBar();
+  // updateCheckBox(newTaskBox.firstElementChild, checkBoxParentEl);
+ 
   
 }
 
@@ -112,7 +120,7 @@ function saveTasks() {
     const input = taskBox.querySelector('.goal-title');
     tasks.push({ id: input.id });
   });
-
+  
   localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
@@ -152,10 +160,14 @@ function reUpdate() {
       input.parentElement.classList.add('completed');
     }
 
+
+    // prevValue =''
     input.addEventListener('input', (e) => {
-      userInput = e.target.value;
-      userLength = userInput.length;
-      prevLength = prevValue.length;
+      // userInput = e.target.value;
+      // userLength = userInput.length;
+      // prevLength = prevValue.length;
+
+     
 
       if (input.parentElement.classList.contains('completed')) {
         let inputText = allGoals[input.id].name;
@@ -168,31 +180,108 @@ function reUpdate() {
         localStorage.setItem('allGoals', JSON.stringify(allGoals));
       }
 
-      prevValue = userInput;
+      // prevValue = userInput;
+     
     });
 
     input.addEventListener('focus', (e) => {
       warningMsg.classList.add('hide');
     });
 
-    input.addEventListener('change', () => {
-      updateTask(input);
+
+
+     let previousUserInput='';
+    input.addEventListener('change', (e) => {
+      debugger
+      let userInput;
+      let prevValue = '';
+      let userLength;
+      let prevLength;
+      userInput = e.target.value;
+      userLength = userInput.length;
+      prevLength = prevValue.length;
+
+      if (e.target.value.length===0) {
+        task--;
+    allGoals.task = task;
+    localStorage.setItem('allGoals', JSON.stringify(allGoals));
+    goalCompletedCount=0;
+    resetCheckBox()
+    
+      } 
+  
+      else   {
+       
+        updateTask(e.target, prevLength, userLength, prevValue, previousUserInput);
+        
+      }
+        console.log(prevValue);
+        
+      prevValue = userInput;
+      previousUserInput= prevValue;
+      console.log(prevValue);
+      
     });
+
+   
+  
   });
+
+
+ 
+ 
+ 
+
 
   // *****************   Handle CheckBox   ****************************
 
+  // [...checkBoxList].forEach((checkBox) => {
+ 
+  //   warningMsgSpan.innerText  =  inputList.length;
+    
+  //   checkBox.addEventListener('click', (e) => {
+  //     let allGoalsAdded = [...inputList].every((input) => {
+  //       return input.value;
+  //     });
+  //     let inputId = checkBox.nextElementSibling.id;
+  //     if (allGoalsAdded) {
+   
+  //       checkBox.parentElement.classList.toggle('completed');
+  //       allGoals[inputId].completed = !allGoals[inputId].completed;
+  //       goalCompletedCount = Object.values(allGoals).filter(
+  //         (goal) => goal.completed
+  //       ).length;
+  //       allGoals.goalCount = goalCompletedCount;
+  //       updateProgressMsg();
+  //       updateProgressBar();
+  //     } else {
+  //       warningMsg.classList.remove('hide');
+  //     }
+  //     localStorage.setItem('allGoals', JSON.stringify(allGoals));
+  //   });
+  // });
+
   [...checkBoxList].forEach((checkBox) => {
+  
  
     warningMsgSpan.innerText  =  inputList.length;
     
+
     checkBox.addEventListener('click', (e) => {
+
+      // debugger
+    
+    
       let allGoalsAdded = [...inputList].every((input) => {
         return input.value;
       });
       let inputId = checkBox.nextElementSibling.id;
+      
+      
       if (allGoalsAdded) {
-   
+        // debugger
+        console.log(checkBox.parentElement);
+     
         checkBox.parentElement.classList.toggle('completed');
         allGoals[inputId].completed = !allGoals[inputId].completed;
         goalCompletedCount = Object.values(allGoals).filter(
@@ -206,32 +295,44 @@ function reUpdate() {
       }
       localStorage.setItem('allGoals', JSON.stringify(allGoals));
     });
+   
   });
-
+  
  
 }
 
-function updateTask(inp) {
+function updateTask(inp, prevLength, userLength, prevValue, previousUserInput) {
+  // debugger
+ console.log(prevLength, userLength);
+
+ console.log(prevValue);
  
-  if (prevLength < userLength) {
+ 
+  if (prevLength < userLength && inp.value !== "" && previousUserInput=== '') {
     task++;
     allGoals.task = task;
     localStorage.setItem('allGoals', JSON.stringify(allGoals));
     updateProgressMsg();
-  } else {
-    task--;
-    allGoals.goalCount = 0;
-    goalCompletedCount = 0;
-    allGoals.task = task;
-    localStorage.setItem('allGoals', JSON.stringify(allGoals));
-    progressValue.style.width = 0;
-    updateProgressMsg();
-    updateProgressBar();
-    [...inputList].forEach((input) => {
-      allGoals[input.id].completed = false;
-      input.parentElement.classList.remove('completed');
-    });
-    localStorage.setItem('allGoals', JSON.stringify(allGoals));
+    // prevValue=''
+  } 
+  
+  // else if(prevLength > userLength && inp.value === ""){
+  //   task--;
+  //   allGoals.goalCount = 0;
+  //   goalCompletedCount = 0;
+  //   allGoals.task = task;
+  //   localStorage.setItem('allGoals', JSON.stringify(allGoals));
+  //   progressValue.style.width = 0;
+  //   updateProgressMsg();
+  //   updateProgressBar();
+  //   [...inputList].forEach((input) => {
+  //     allGoals[input.id].completed = false;
+  //     input.parentElement.classList.remove('completed');
+  //   });
+  //   localStorage.setItem('allGoals', JSON.stringify(allGoals));
+  // }
+  else{
+    alert()
   }
 }
 
@@ -241,6 +342,65 @@ function resetCheckBox() {
     allGoals[input.id].completed = false;
     input.parentElement.classList.remove('completed');
   });
+
+  updateProgressMsg();
+  updateProgressBar()
   localStorage.setItem('allGoals', JSON.stringify(allGoals));
 }
 
+
+
+// function updateCheckBox(checkBox, checkBoxParentEl  ){
+// //  debugger
+// console.log(checkBoxParentEl);
+//   checkBox.addEventListener('click', (e) => {
+//     let allGoalsAdded = [...inputList].every((input) => {
+//       return input.value;
+//     });
+//     let inputId = checkBox.nextElementSibling.id;
+    
+    
+//     if (allGoalsAdded) {
+//       console.log(checkBox);
+     
+//       checkBoxParentEl.classList.toggle('completed');
+//       // checkBox.parentElement.classList.toggle('completed');
+//       allGoals[inputId].completed = !allGoals[inputId].completed;
+//       goalCompletedCount = Object.values(allGoals).filter(
+//         (goal) => goal.completed
+//       ).length;
+//       allGoals.goalCount = goalCompletedCount;
+//       updateProgressMsg();
+//       updateProgressBar();
+//     } else {
+//       warningMsg.classList.remove('hide');
+//     }
+//     localStorage.setItem('allGoals', JSON.stringify(allGoals));
+//   });
+// }
+
+
+
+// function updateTask(inp) {
+//   // debugger
+//  console.log(prevLength, userLength);
+ 
+// console.log(prevValue);
+ 
+//   if ( inp.value !== "" && prevValue==='') {
+//     task++;
+//     allGoals.task = task;
+//     localStorage.setItem('allGoals', JSON.stringify(allGoals));
+//     updateProgressMsg();
+//   } 
+//   else if(prevValue!=='' && prevLength===userLength){
+//     task++;
+//     allGoals.task = task;
+//     localStorage.setItem('allGoals', JSON.stringify(allGoals));
+//     updateProgressMsg();
+//   }
+ 
+//   else{
+//     alert()
+//   }
+// }
