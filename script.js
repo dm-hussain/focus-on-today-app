@@ -3,8 +3,8 @@ let inputList = document.getElementsByClassName('goal-title');
 const warningMsg = document.querySelector('#warning-msg');
 let progressValue = document.querySelector('.progress-value');
 let progressValueText = document.querySelector('.progress-value span');
-let warningMsgSpan= document.querySelector('#warning-msg span')
-const resetBtn= document.querySelector('#reset-btn');
+let warningMsgSpan = document.querySelector('#warning-msg span');
+const resetBtn = document.querySelector('#reset-btn');
 // Add event listener to the button
 const addGoalBtn = document.getElementById('add-goal-button');
 addGoalBtn.addEventListener('click', addNewTask);
@@ -44,15 +44,12 @@ function createTaskBox(id, value) {
   inputCounter++;
   return taskBox;
 }
- 
+
 // Function to append a new task box to the task container
 function addNewTask() {
-
-  
-  
-  progressValue.style.width =0;
-  goalCompletedCount= 0;
-  updateProgressMsg()
+  progressValue.style.width = 0;
+  goalCompletedCount = 0;
+  updateProgressMsg();
   resetCheckBox();
   const taskContainer = document.querySelector('.task-container');
   const newTaskBox = createTaskBox();
@@ -60,27 +57,22 @@ function addNewTask() {
   saveTasks();
   reUpdate();
   localStorage.setItem('allGoals', JSON.stringify(allGoals));
-   
-  setTimeout(()=> {
-    location.reload()
-  }, 100)
+
+  setTimeout(() => {
+    location.reload();
+  }, 100);
 
   updateProgressBar();
 }
 
-
 function updateProgressMsg() {
-
   let progressLabel = document.querySelector('.progress-label');
-  if(task/goalCompletedCount === 1) {
+  if (task / goalCompletedCount === 1) {
     progressLabel.innerText = `Whoa! You just completed all the goals, time for chill :D`;
-    
-  }
-  else{
+  } else {
     taskRemaining = task - goalCompletedCount;
     progressLabel.innerText = `You have ${taskRemaining} goal to complete`;
   }
- 
 }
 
 function updateProgressBar() {
@@ -95,21 +87,19 @@ function updateProgressBar() {
 //   // 'Just a step away, keep going!',
 //   'Whoa! You just completed all the goals, time for chill :D',
 // ];
- 
- 
 
 // ***********Save task to local Storage*************
 
 function saveTasks() {
   const tasks = [];
-  
+
   const taskBoxes = document.querySelectorAll('.task-box');
 
   taskBoxes.forEach((taskBox) => {
     const input = taskBox.querySelector('.goal-title');
     tasks.push({ id: input.id });
   });
-  
+
   localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
@@ -126,29 +116,20 @@ function loadTasks() {
   updateProgressBar();
 }
 
-
-
-
-
-
 // **************************************************************************************************************************************
 // function to Re-Update all the values and functions after retrieving all the data from LocalStorage
 
 function reUpdate() {
   // *************   Handle Input   ***************
- 
 
-if(inputList.length>4){
-  addGoalBtn.setAttribute('disabled', 'true')
-  addGoalBtn.classList.add('hide')
-  resetBtn.classList.remove('hide')
-
-}
-else{
-  addGoalBtn.removeAttribute('disabled');
-  addGoalBtn.classList.remove('hide')
-  
-}
+  if (inputList.length > 4) {
+    addGoalBtn.setAttribute('disabled', 'true');
+    addGoalBtn.classList.add('hide');
+    resetBtn.classList.remove('hide');
+  } else {
+    addGoalBtn.removeAttribute('disabled');
+    addGoalBtn.classList.remove('hide');
+  }
 
   [...inputList].forEach((input) => {
     if (allGoals[input.id]) {
@@ -163,7 +144,6 @@ else{
     if (allGoals[input.id].completed) {
       input.parentElement.classList.add('completed');
     }
-
 
     input.addEventListener('input', (e) => {
       if (input.parentElement.classList.contains('completed')) {
@@ -181,9 +161,8 @@ else{
       warningMsg.classList.add('hide');
     });
 
-     let previousUserInput='';
+    let previousUserInput = '';
     input.addEventListener('change', (e) => {
- 
       let userInput;
       let prevValue = '';
       let userLength;
@@ -191,34 +170,32 @@ else{
       userInput = e.target.value;
       userLength = userInput.length;
       prevLength = prevValue.length;
-      if (e.target.value.length===0) {
+      if (e.target.value.length === 0) {
         task--;
-    allGoals.task = task;
-    localStorage.setItem('allGoals', JSON.stringify(allGoals));
-    goalCompletedCount=0;
-    resetCheckBox()
-      } 
-      else   {
-        updateTask(e.target, prevLength, userLength, prevValue, previousUserInput);
-        
+        allGoals.task = task;
+        localStorage.setItem('allGoals', JSON.stringify(allGoals));
+        goalCompletedCount = 0;
+        resetCheckBox();
+      } else {
+        updateTask(
+          e.target,
+          prevLength,
+          userLength,
+          prevValue,
+          previousUserInput
+        );
       }
-        // console.log(prevValue);
+
       prevValue = userInput;
-      previousUserInput= prevValue;
-      // console.log(prevValue);
-      
+      previousUserInput = prevValue;
     });
-
   });
-
 
   // *****************   Handle CheckBox   ****************************
 
- 
   [...checkBoxList].forEach((checkBox) => {
-    warningMsgSpan.innerText  =  inputList.length;
+    warningMsgSpan.innerText = inputList.length;
     checkBox.addEventListener('click', (e) => {
-
       // debugger
       let allGoalsAdded = [...inputList].every((input) => {
         return input.value;
@@ -243,15 +220,12 @@ else{
 }
 
 function updateTask(inp, prevLength, userLength, prevValue, previousUserInput) {
-
-  
-
-  if (prevLength < userLength && inp.value !== "" && previousUserInput=== '') {
+  if (prevLength < userLength && inp.value !== '' && previousUserInput === '') {
     task++;
     allGoals.task = task;
     localStorage.setItem('allGoals', JSON.stringify(allGoals));
     updateProgressMsg();
-  } 
+  }
 }
 
 function resetCheckBox() {
@@ -261,30 +235,25 @@ function resetCheckBox() {
     input.parentElement.classList.remove('completed');
   });
   updateProgressMsg();
-  updateProgressBar()
+  updateProgressBar();
   localStorage.setItem('allGoals', JSON.stringify(allGoals));
 }
 
-
-resetBtn.addEventListener('click', resetAll)
+resetBtn.addEventListener('click', resetAll);
 
 function resetAll() {
-
- tasks = [];
+  tasks = [];
   localStorage.setItem('tasks', JSON.stringify(tasks));
 
-allGoals= {}
-localStorage.setItem('allGoals', JSON.stringify(allGoals));
-location.reload()
+  allGoals = {};
+  localStorage.setItem('allGoals', JSON.stringify(allGoals));
+  location.reload();
 }
 
+document.addEventListener('keypress', (e) => {
+  // debugger
 
- document.addEventListener('keyup', (e)=>{
-
-  if(e.code==='KeyR') resetAll();
-
-  console.log(e.key);
-  console.log(e.code);
-  
-  
- })
+  if (!e.target.id) {
+    resetAll();
+  }
+});
