@@ -4,7 +4,7 @@ const warningMsg = document.querySelector('#warning-msg');
 let progressValue = document.querySelector('.progress-value');
 let progressValueText = document.querySelector('.progress-value span');
 let warningMsgSpan= document.querySelector('#warning-msg span')
-
+const resetBtn= document.querySelector('#reset-btn');
 // Add event listener to the button
 const addGoalBtn = document.getElementById('add-goal-button');
 addGoalBtn.addEventListener('click', addNewTask);
@@ -47,6 +47,8 @@ function createTaskBox(id, value) {
  
 // Function to append a new task box to the task container
 function addNewTask() {
+
+  
   
   progressValue.style.width =0;
   goalCompletedCount= 0;
@@ -100,6 +102,7 @@ function updateProgressBar() {
 
 function saveTasks() {
   const tasks = [];
+  
   const taskBoxes = document.querySelectorAll('.task-box');
 
   taskBoxes.forEach((taskBox) => {
@@ -123,11 +126,30 @@ function loadTasks() {
   updateProgressBar();
 }
 
+
+
+
+
+
 // **************************************************************************************************************************************
 // function to Re-Update all the values and functions after retrieving all the data from LocalStorage
 
 function reUpdate() {
   // *************   Handle Input   ***************
+
+  console.log(inputList.length);
+
+if(inputList.length>4){
+  addGoalBtn.setAttribute('disabled', 'true')
+  addGoalBtn.classList.add('hide')
+  resetBtn.classList.remove('hide')
+
+}
+else{
+  addGoalBtn.removeAttribute('disabled');
+  addGoalBtn.classList.remove('hide')
+  
+}
 
   [...inputList].forEach((input) => {
     if (allGoals[input.id]) {
@@ -223,6 +245,8 @@ function reUpdate() {
 
 function updateTask(inp, prevLength, userLength, prevValue, previousUserInput) {
 
+  
+
   if (prevLength < userLength && inp.value !== "" && previousUserInput=== '') {
     task++;
     allGoals.task = task;
@@ -240,6 +264,19 @@ function resetCheckBox() {
   updateProgressMsg();
   updateProgressBar()
   localStorage.setItem('allGoals', JSON.stringify(allGoals));
+}
+
+
+resetBtn.addEventListener('click', resetAll)
+
+function resetAll() {
+
+ tasks = [];
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+
+allGoals= {}
+localStorage.setItem('allGoals', JSON.stringify(allGoals));
+location.reload()
 }
 
 
