@@ -279,4 +279,12 @@ location.reload()
 }
 
 
- 
+ document.addEventListener('keyup', (e)=>{
+
+  if(e.code==='KeyR') resetAll();
+
+  console.log(e.key);
+  console.log(e.code);
+  
+  
+ })
