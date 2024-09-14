@@ -250,10 +250,10 @@ function resetAll() {
   location.reload();
 }
 
-document.addEventListener('keypress', (e) => {
-  // debugger
-
-  if (!e.target.id) {
+window.addEventListener('keypress', (e) => {
+  if (e.target.classList.contains('goal-title') && e.code === 'KeyR') {
+    e.stopPropagation();
+  } else if (e.code === 'KeyR') {
     resetAll();
   }
 });
