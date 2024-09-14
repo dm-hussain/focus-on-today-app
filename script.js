@@ -136,8 +136,7 @@ function loadTasks() {
 
 function reUpdate() {
   // *************   Handle Input   ***************
-
-  console.log(inputList.length);
+ 
 
 if(inputList.length>4){
   addGoalBtn.setAttribute('disabled', 'true')
